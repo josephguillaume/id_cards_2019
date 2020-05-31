@@ -1,0 +1,101 @@
+
+* definition
+  * consideration and justification of options in defining the system
+
+* requires
+  * attention by both modellers and clients
+
+* when to use
+  * The conceptualisation step is important even if a model is not designed from scratch because time and money (as well as the clients' beliefs) restrict one to using a ‘canned’ model. Conceptualisation exposes the weaknesses of the canned approach and perhaps ways to mitigate them.
+
+* has subtask
+  *  specification of data and other prior knowledge
+
+    * synonym
+      * define the data, prior knowledge and assumptions about processes
+
+    * uses
+      *  prior knowledge
+
+        * has subclass
+          *  “Prior knowledge” can be genuinely known in advance, found from experiments or analyses performed as part of model development, or assumed, with reservations, on the basis of experience.
+          *  quantitative prior knowledge
+
+    * has subtask
+      *  The procedure is mainly qualitative to start with, asking what is known of the processes, what records, instrumentation and monitoring are available, and how far they are compatible with the physical and temporal scope dictated by the purposes and objectives.
+      *  However, it becomes quantitative as soon as we have to decide what to include and what can be simplified or neglected. What variables are to be included, in how much detail? Once the outputs are selected, a rough assessment is needed of which drivers they are sensitive to and what internal processes influence the relations between the drivers and outputs; this will usually be partly a quantitative assessment.
+  *  system conceptualisation
+
+    * definition
+      * definition of basic premises about the working of the system being modelled
+
+    * can use
+      *  system conceptualisation tools
+
+        * can use
+          *  bond graph
+          *  block diagram
+          *  linguistic model
+          *  influence diagrams
+          *  aids to thinking showing how model drivers are linked to internal (state) variables and outputs (observed responses)
+
+        * reference
+          * Wellstead, 1979
+          * Gawthrop and Smith, 1996
+
+    * has subtask
+      *  tentative conceptualisation
+
+        * description
+          * Initially the conceptualisation may be rudimentary, with details postponed until the results of knowledge elicitation and data analysis can be exploited.
+
+        * use
+          * A tentative initial conceptualisation and a visualisation such as a block diagram may be a great help in showing what else must be found out about the system.
+  *  definition of model scale and resolution
+
+    * has subtask
+      *  quantitative assessment of effect of model scale and resolution
+  *  state degree of detail needed in outputs
+  *  Choose degree of aggregation and spatio-temporal resolution (intervals and accuracy)
+  *  specification of data and other prior knowledge
+  *  define boundaries
+
+    * has subtask
+      *  define boundary conditions
+
+        * can use
+          *  modelled as constraints or as input scenarios, whose values can be perturbed in line with stipulated assumptions
+      *  clearly define boundaries (e.g. physical, socioeconomic and institutional)
+  *  clearly define system being modelled
+  *  define scope
+
+    * synonym
+      * What to include and what not to incorporate in a modelling activity
+
+    * should be
+      * addressed explicitly at the outset and iteratively revisited as far as resources allow
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               text
+1                                                                                                                                                                                                                                                                                                                                                                                                   Ill-chosen intervals can destroy the validity of the model, but once recognized can be amended as part of the learning process.
+2                                                                                                                                                                                                                                                       Such assessment takes considerable effort and insight into the processes operating in the system, so it is often given too little attention. Too often sampling intervals in time and space are chosen by guesswork or simply because data are available at those intervals
+3                                                                                                                                                                                                                                                                                                           This is not trivial. Few models are flexible enough to respond to these evolving needs, which are commonly passed off by modellers as due to the client “not thinking their problem through properly at the beginning.”
+4 For some environmental systems one has the luxury of optimal experimental design where inputs (such as to a bioreactor) can be manipulated to enhance the identifiability of a model (e.g. Versyck et al., 1998, Walter and Pronzato, 1997). For most systems, however, we must at any given time accept the data that are available. On the other hand, modellers can play a more proactive role in designing future data collection exercises. Monitoring efforts in the global change community are amongst the most striking.
+  position                                         link
+1        7 https://hypothes.is/a/Oxp8cKhSEem3zItFXJNRzg
+2        8 https://hypothes.is/a/NsW5-qhSEemlbnPw1X4U5A
+3       12 https://hypothes.is/a/-Amo3qhREemYAScWMGAKiw
+4       24 https://hypothes.is/a/iOfmpKhSEemm_EMP71xWyA
+                                                                                    annotation
+1                        Subject: definition of model scale and resolution\nPredicate: problem
+2 Subject: quantitative assessment of effect of model scale and resolution\nPredicate: problem
+3                 Subject: modifying conceptualisation as experience grows\nPredicate: problem
+4                                                                     Subject: data collection
+                                                          subject predicate
+1                        definition of model scale and resolution   problem
+2 quantitative assessment of effect of model scale and resolution   problem
+3                 modifying conceptualisation as experience grows   problem
+4                                                 data collection  topic of
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             object
+1                                                                                                                                                                                                                                                                                                                                                                                                   Ill-chosen intervals can destroy the validity of the model, but once recognized can be amended as part of the learning process.
+2                                                                                                                                                                                                                                                       Such assessment takes considerable effort and insight into the processes operating in the system, so it is often given too little attention. Too often sampling intervals in time and space are chosen by guesswork or simply because data are available at those intervals
+3                                                                                                                                                                                                                                                                                                           This is not trivial. Few models are flexible enough to respond to these evolving needs, which are commonly passed off by modellers as due to the client “not thinking their problem through properly at the beginning.”
+4 For some environmental systems one has the luxury of optimal experimental design where inputs (such as to a bioreactor) can be manipulated to enhance the identifiability of a model (e.g. Versyck et al., 1998, Walter and Pronzato, 1997). For most systems, however, we must at any given time accept the data that are available. On the other hand, modellers can play a more proactive role in designing future data collection exercises. Monitoring efforts in the global change community are amongst the most striking.
