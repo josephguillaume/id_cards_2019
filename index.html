@@ -17,8 +17,6 @@
         color: grey;
       }
     </style>
-    <script src="scripts/jsonld.min.js"></script>
-    <script src="out/statements.json"></script>
     <script src="scripts/rdflib.min.js"></script>
     <script src="scripts/solid-auth-client.bundle.js"></script>
     <script src="scripts/ui_components.js"></script>
@@ -26,73 +24,15 @@
   <body>
     <div id="root"></div>
     <script>
-      // TODO: read in statements as RDF instead
-      statements_subjects = statements.map(s => s.subject);
-      statements = statements.map((s, i) => {
-        s["@id"] = `${s.link}_${i}`;
-        s.predicate = VOC(s.predicate.replaceAll(" ", "_")).value;
-        s.object_type = statements_subjects.includes(s.object) ? "@id" : ""; //Once-off, should be in data
-        if (s.object_type == "@id")
-          s.object = {
-            "@id":
-              "http://example.com/conceptualisation#" +
-              s.object.replaceAll(" ", "_")
-          };
-        s.subject =
-          "http://example.com/conceptualisation#" +
-          s.subject.replaceAll(" ", "_");
-        return s;
-      });
-
-      var graph = {
-        "@context": {
-          "@base": "http://example.com/vocab/",
-          "@vocab": "http://example.com/vocab/",
-          predicate: {
-            "@type": "@id"
-          },
-          subject: {
-            "@type": "@id"
-          }
-        },
-        "@graph": statements
-      };
-
-      const page_content = `
-      @prefix voc: <http://example.com/vocab/> .
-      @prefix : <http://example.com/conceptualisation#> .
-      :this voc:target_subject :conceptualisation .
-      :this voc:title "Conceptualisation" .
-      :this voc:predicates (voc:definition voc:synonym voc:description voc:requires voc:use voc:when_to_use voc:should_be voc:uses voc:can_use voc:has_subtask voc:has_subclass voc:reference voc:topic_of) .
-      voc:definition voc:defaultDisplayComponent voc:PredicateUL.
-      voc:synonym voc:defaultDisplayComponent voc:PredicateUL.
-      voc:description voc:defaultDisplayComponent voc:PredicateUL.
-      voc:requires voc:defaultDisplayComponent voc:PredicateUL.
-      voc:use voc:defaultDisplayComponent voc:PredicateUL.
-      voc:when_to_use voc:defaultDisplayComponent voc:PredicateUL.
-      voc:should_be voc:defaultDisplayComponent voc:PredicateUL.
-      voc:reference voc:defaultDisplayComponent voc:PredicateUL.
-      voc:topic_of voc:defaultDisplayComponent voc:PredicateUL.
-      voc:uses voc:defaultDisplayComponent voc:HTMLANDFILTERSUBGROUP.
-      voc:can_use voc:defaultDisplayComponent voc:HTMLANDFILTERSUBGROUP.
-      voc:has_subtask voc:defaultDisplayComponent voc:HTMLANDFILTERSUBGROUP.
-      voc:has_subclass voc:defaultDisplayComponent voc:HTMLANDFILTERSUBGROUP.
-                 `;
-
-      var page = new Page(page_content);
+      var page = new Page();
       page.registerComponent(VOC("PredicateUL"), PredicateUL);
       page.registerComponent(
         VOC("HTMLANDFILTERSUBGROUP"),
         HTMLANDFILTERSUBGROUP
       );
-      page.statements = statements;
-      //TODO: don't use default graph
-      var root;
-      jsonld
-        .toRDF(graph, { format: "application/n-quads" })
-        //TODO: addAll fails because datatype does not have equals function?
-        .then(x =>
-          $rdf.parse(x, page.store, "http://example.com/conceptualisation")
+      page
+        .load_page(
+          "https://josephguillaume.solidcommunity.net/public/id_cards/conceptualisation.ttl"
         )
         .then(() => {
           // TODO: identify and deal with leftover statements
