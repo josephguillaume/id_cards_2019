@@ -40,12 +40,18 @@ class PredicateUL {
 }
 class HTMLANDFILTERSUBGROUP {
   constructor(page, subject, predicate) {
+    this.subject = $rdf.termValue(subject);
+    this.predicate = $rdf.termValue(predicate);
     this.subgroups = page.statements.filter(
-      s => (s.subject == subject) & (s.predicate == predicate)
+      s => (s.subject == this.subject) & (s.predicate == this.predicate)
     );
-    this.subject = subject;
-    this.predicate = predicate;
-    this.blocks = this.subgroups.map(s => new SubjectBlock(page, s.object));
+    this.blocks = this.subgroups.map(
+      s =>
+        new SubjectBlock(
+          page,
+          typeof s.object == "string" ? s.object : s.object["@id"]
+        )
+    );
   }
   render() {
     if (this.subgroups.length == 0) return "\n";
@@ -53,8 +59,11 @@ class HTMLANDFILTERSUBGROUP {
     this.subgroups.forEach(
       (s, i) =>
         (innerHTML +=
-          `<li><span title='${s.documentName}: ${s.text}'><a href='${s.link}' target='_new'>${s.object}</a></li>` +
-          this.blocks[i].render()) + "</li>\n"
+          `<li><span title='${s.documentName}: ${s.text}'><a href='${
+            s.link
+          }' target='_new'>${
+            typeof s.object == "string" ? s.object : s.object["@id"]
+          }</a></li>` + this.blocks[i].render()) + "</li>\n"
     );
     innerHTML += "</ul></li>\n";
     return innerHTML;
@@ -64,7 +73,7 @@ class HTMLANDFILTERSUBGROUP {
 class SubjectBlock {
   constructor(page, subject) {
     this.page = page;
-    this.subject = subject.replace(/.*#/, ""); //TODO
+    this.subject = $rdf.termValue(subject);
     const predicates = page.store.match(null, VOC("predicates"), null)[0].object
       .elements;
     this.blocks = predicates.map(p => this.handlePredicate(p));
@@ -79,7 +88,7 @@ class SubjectBlock {
       .value;
     let componentClass = this.page.registeredComponents[component];
     //TODO: get label for each predicate
-    return new componentClass(this.page, this.subject, p.value);
+    return new componentClass(this.page, this.subject, $rdf.termValue(p));
   }
   render() {
     if (this.nstatements == 0) return "\n";
