@@ -57,10 +57,23 @@ class Page {
   registerComponent(namedNode, classRef) {
     this.registeredComponents[namedNode.value] = classRef;
   }
+  label(subject) {
+    try {
+      let st = this.store.any(
+        $rdf.sym(subject),
+        $rdf.sym("http://www.w3.org/2000/01/rdf-schema#label"),
+        null
+      );
+      return st ? st : subject.replaceAll("_", " ").replace(/.*#/, "");
+    } catch (error) {
+      return subject;
+    }
+  }
 }
 
 class PredicateUL {
   constructor(page, subject, predicate) {
+    this.page = page;
     this.wanted_statements = page.statements.filter(
       s => (s.subject == subject) & (s.predicate == predicate)
     );
@@ -69,42 +82,39 @@ class PredicateUL {
   }
   render() {
     if (this.wanted_statements.length == 0) return "\n";
-    var innerHTML = `\n\n<li><span class=predicate>${this.predicate}</span>\n<ul>\n\n`;
-    this.wanted_statements.forEach(
-      s =>
-        (innerHTML += `<li title='${s.documentName}: ${s.text}'><a href='${s.link}' target='_new'>${s.object}</a></li>`)
-    );
+    let predicate = this.page.label(this.predicate);
+    var innerHTML = `\n\n<li><span class=predicate>${predicate}</span>\n<ul>\n\n`;
+    let page = this.page;
+    this.wanted_statements.forEach(function (s) {
+      let object = page.label(s.object);
+      innerHTML += `<li title='${s.documentName}: ${s.text}'><a href='${s.link}' target='_new'>${object}</a></li>`;
+    });
     innerHTML += "</ul></li>\n";
     return innerHTML;
   }
 }
 class HTMLANDFILTERSUBGROUP {
   constructor(page, subject, predicate) {
+    this.page = page;
     this.subject = $rdf.termValue(subject);
     this.predicate = $rdf.termValue(predicate);
     this.subgroups = page.statements.filter(
       s => (s.subject == this.subject) & (s.predicate == this.predicate)
     );
-    this.blocks = this.subgroups.map(
-      s =>
-        new SubjectBlock(
-          page,
-          typeof s.object == "string" ? s.object : s.object["@id"]
-        )
-    );
+    this.blocks = this.subgroups.map(s => new SubjectBlock(page, s.object));
   }
   render() {
     if (this.subgroups.length == 0) return "\n";
-    var innerHTML = `\n\n<li><span class=predicate>${this.predicate}</span>\n<ul>\n\n`;
-    this.subgroups.forEach(
-      (s, i) =>
-        (innerHTML +=
-          `<li><span title='${s.documentName}: ${s.text}'><a href='${
-            s.link
-          }' target='_new'>${
-            typeof s.object == "string" ? s.object : s.object["@id"]
-          }</a></li>` + this.blocks[i].render()) + "</li>\n"
-    );
+    let predicate = this.page.label(this.predicate);
+    var innerHTML = `\n\n<li><span class=predicate>${predicate}</span>\n<ul>\n\n`;
+    let comp = this;
+    this.subgroups.forEach(function (s, i) {
+      let object = comp.page.label(s.object);
+      innerHTML +=
+        `<li><span title='${s.documentName}: ${s.text}'><a href='${s.link}' target='_new'>${object}</a></li>` +
+        comp.blocks[i].render() +
+        "</li>\n";
+    });
     innerHTML += "</ul></li>\n";
     return innerHTML;
   }
