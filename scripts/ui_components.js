@@ -4,6 +4,9 @@ const VOC = new $rdf.Namespace(
 voc_uri = x =>
   `<https://josephguillaume.solidcommunity.net/public/id_cards/vocab.ttl#${x}>`;
 
+/**
+ * Base class containing Linked Data to be displayed and registered UI components
+ */
 class Page {
   constructor(rdf_uri) {
     this.registeredComponents = {};
@@ -71,7 +74,12 @@ class Page {
   }
 }
 
-class PredicateUL {
+/**
+ * UI component listing objects for a given subject and predicate
+ * The `link` to an annotation and its original `text` are also included
+ * rdfs:label is used for IRIs
+ */
+class ObjectList {
   constructor(page, subject, predicate) {
     this.page = page;
     this.wanted_statements = page.statements.filter(
@@ -93,7 +101,13 @@ class PredicateUL {
     return innerHTML;
   }
 }
-class HTMLANDFILTERSUBGROUP {
+
+/**
+ * UI Component providing nested `SubjectBlocks` for each object of a given subject and predicate
+ * The `link` to an annotation and its original `text` are also included
+ * rdfs:label is used for IRIs
+ */
+class PredicateBlock {
   constructor(page, subject, predicate) {
     this.page = page;
     this.subject = $rdf.termValue(subject);
@@ -120,6 +134,9 @@ class HTMLANDFILTERSUBGROUP {
   }
 }
 
+/**
+ * UI component for a subject invoking registered UI components for each of a list of predicates
+ */
 class SubjectBlock {
   constructor(page, subject) {
     this.page = page;

@@ -25,11 +25,8 @@
     <div id="root"></div>
     <script>
       var page = new Page();
-      page.registerComponent(VOC("PredicateUL"), PredicateUL);
-      page.registerComponent(
-        VOC("HTMLANDFILTERSUBGROUP"),
-        HTMLANDFILTERSUBGROUP
-      );
+      page.registerComponent(VOC("PredicateUL"), ObjectList);
+      page.registerComponent(VOC("HTMLANDFILTERSUBGROUP"), PredicateBlock);
       page
         .load_page(
           "https://josephguillaume.solidcommunity.net/public/id_cards/conceptualisation.ttl"
