@@ -106,6 +106,7 @@ str_glue("{nrow(statements2)} final statements") %>% print
 dir.create("out")
 write_csv(statements2,"out/statements.csv")
 
+jsonlite::write_json(statements2,"out/statements.json")
 
 ## Display ----
 
@@ -186,5 +187,7 @@ leftover <- statements2 %>%
   display_html("conceptualisation") 
 cat("</body></html>")
 sink()
+
+# FIXME: not showing details of "specification of data and other prior knowledge"
 
 # TODO: allow editing of annotation
