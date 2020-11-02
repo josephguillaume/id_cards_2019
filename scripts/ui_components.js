@@ -13,6 +13,10 @@ class Page {
     this.components = [];
     this.store = $rdf.graph();
     this.fetcher = new $rdf.Fetcher(this.store);
+    // Internal array representation of data to be displayed
+    this.statements = [];
+    // Store for statements from additional sources
+    this.external_data = {};
   }
   /**
    * Load data defining the page UI and data to be used
@@ -69,10 +73,40 @@ class Page {
       return a.position - b.position;
     });
   }
-  render() {
+  load_external_data(rdf_uri) {
+    // TODO: load rdf into store and then convert
+    // TODO: allow loading other types of data with appropriate registered conversions
+    this.external_data[rdf_uri] = [
+      {
+        text: "",
+        position: null,
+        link: "",
+        annotation: "",
+        subject:
+          "https://josephguillaume.solidcommunity.net/public/id_cards/conceptualisation.ttl#system_conceptualisation_tools",
+        predicate:
+          "https://josephguillaume.solidcommunity.net/public/id_cards/vocab.ttl#reference",
+        object: "New reference",
+        object_type: "Literal"
+      }
+    ];
+    // TODO: indicate in UI that external data is available
+  }
+  /**
+   * Render the page by calling render on root component.
+   * @param {Boolean indicating whether to ask UIs to compare with external data source
+   * specified by `this.external_identifier`.
+   * Usually invokved by calling `page.compare(identifier)`} compare
+   */
+  render(compare) {
     // TODO: identify and deal with leftover statements
     // TODO: allow root element to be specified
-    document.getElementById("root").innerHTML = this.title + this.root.render();
+    document.getElementById("root").innerHTML =
+      this.title + this.root.render(compare);
+  }
+  compare(identifier) {
+    this.external_identifier = identifier;
+    this.render(true);
   }
   /**
    * Register a JS class to be used when data requests a UI component by URI
@@ -131,7 +165,8 @@ class ObjectList {
     this.predicate = predicate;
     this.component_id = page.registerComponent(this);
   }
-  render() {
+  render(compare) {
+    if (compare) return this.compare();
     if (this.wanted_statements.length == 0) return "\n";
     let predicate = this.page.label(this.predicate);
     var innerHTML = `\n\n<li><span class=predicate>${predicate}</span>\n<ul>\n\n`;
@@ -139,6 +174,34 @@ class ObjectList {
     this.wanted_statements.forEach(function (s, i) {
       let object = comp.page.label(s.object);
       innerHTML += `<li title='${s.documentName}: ${s.text}'><a onClick='page.show_settings(${comp.component_id},${i})'>${object}</a></li>`;
+    });
+    innerHTML += "</ul></li>\n";
+    return innerHTML;
+  }
+  compare() {
+    //TODO: in this case, render could be a special case of compare with a null identifier?
+    this.comparison_statements = page.external_data[
+      page.external_identifier
+    ].filter(
+      s => (s.subject == this.subject) & (s.predicate == this.predicate)
+    );
+    // TODO: filter statements
+    if (
+      this.wanted_statements.length == 0 &&
+      this.comparison_statements.length == 0
+    )
+      return "\n";
+    let predicate = this.page.label(this.predicate);
+    var innerHTML = `\n\n<li><span class=predicate>${predicate}</span>\n<ul>\n\n`;
+    let comp = this;
+    this.wanted_statements.forEach(function (s, i) {
+      let object = comp.page.label(s.object);
+      innerHTML += `<li title='${s.documentName}: ${s.text}'><a onClick='page.show_settings(${comp.component_id},${i})'>${object}</a></li>`;
+    });
+    this.comparison_statements.forEach(function (s, i) {
+      let object = comp.page.label(s.object);
+      // TODO: separate settings for comparison statements
+      innerHTML += `<li title='${s.documentName}: ${s.text}'><a style="color: red;">${object}</a></li>`;
     });
     innerHTML += "</ul></li>\n";
     return innerHTML;
@@ -171,7 +234,7 @@ class PredicateBlock {
     this.blocks = this.subgroups.map(s => new SubjectBlock(page, s.object));
     this.component_id = page.registerComponent(this);
   }
-  render() {
+  render(compare) {
     if (this.subgroups.length == 0) return "\n";
     let predicate = this.page.label(this.predicate);
     var innerHTML = `\n\n<li><span class=predicate>${predicate}</span>\n<ul>\n\n`;
@@ -180,7 +243,7 @@ class PredicateBlock {
       let object = comp.page.label(s.object);
       innerHTML +=
         `<li><span title='${s.documentName}: ${s.text}'><a href='${s.link}' target='_new'>${object}</a></li>` +
-        comp.blocks[i].render() +
+        comp.blocks[i].render(compare) +
         "</li>\n";
     });
     innerHTML += "</ul></li>\n";
@@ -212,10 +275,10 @@ class SubjectBlock {
     //TODO: get label for each predicate
     return new componentClass(this.page, this.subject, $rdf.termValue(p));
   }
-  render() {
+  render(compare) {
     if (this.nstatements == 0) return "\n";
     var innerHTML = "<div class=subject_block><ul>\n";
-    this.blocks.forEach(b => (innerHTML += b.render()));
+    this.blocks.forEach(b => (innerHTML += b.render(compare)));
     innerHTML += "</ul></div>\n";
     return innerHTML;
   }
