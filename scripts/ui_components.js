@@ -9,7 +9,8 @@ voc_uri = x =>
  */
 class Page {
   constructor(rdf_uri) {
-    this.registeredComponents = {};
+    this.registeredComponentClasses = {};
+    this.components = [];
     this.store = $rdf.graph();
     this.fetcher = new $rdf.Fetcher(this.store);
   }
@@ -57,8 +58,15 @@ class Page {
       return a.position - b.position;
     });
   }
-  registerComponent(namedNode, classRef) {
-    this.registeredComponents[namedNode.value] = classRef;
+  registerComponentClass(namedNode, classRef) {
+    this.registeredComponentClasses[$rdf.termValue(namedNode)] = classRef;
+  }
+  registerComponent(instanceRef) {
+    return this.components.push(instanceRef) - 1;
+  }
+  show_settings(id, options) {
+    let component = this.components[id];
+    if (component) component.show_settings(options);
   }
   label(subject) {
     try {
@@ -87,18 +95,29 @@ class ObjectList {
     );
     this.subject = subject;
     this.predicate = predicate;
+    this.component_id = page.registerComponent(this);
   }
   render() {
     if (this.wanted_statements.length == 0) return "\n";
     let predicate = this.page.label(this.predicate);
     var innerHTML = `\n\n<li><span class=predicate>${predicate}</span>\n<ul>\n\n`;
-    let page = this.page;
-    this.wanted_statements.forEach(function (s) {
-      let object = page.label(s.object);
-      innerHTML += `<li title='${s.documentName}: ${s.text}'><a href='${s.link}' target='_new'>${object}</a></li>`;
+    let comp = this;
+    this.wanted_statements.forEach(function (s, i) {
+      let object = comp.page.label(s.object);
+      innerHTML += `<li title='${s.documentName}: ${s.text}'><a onClick='page.show_settings(${comp.component_id},${i})'>${object}</a></li>`;
     });
     innerHTML += "</ul></li>\n";
     return innerHTML;
+  }
+  show_settings(options) {
+    let $el = document.getElementById("ObjectListSettings");
+    if ($el === null) {
+      let div = document.createElement("div");
+      div.id = "ObjectListSettings";
+      $el = document.body.appendChild(div);
+    }
+    let s = this.wanted_statements[options];
+    $el.innerHTML = `Annotation: <a href='${s.link}' target='_new'>${s.link}</a>`;
   }
 }
 
@@ -153,7 +172,7 @@ class SubjectBlock {
   handlePredicate(p) {
     let component = this.page.store.any(p, VOC("defaultDisplayComponent"), null)
       .value;
-    let componentClass = this.page.registeredComponents[component];
+    let componentClass = this.page.registeredComponentClasses[component];
     //TODO: get label for each predicate
     return new componentClass(this.page, this.subject, $rdf.termValue(p));
   }
