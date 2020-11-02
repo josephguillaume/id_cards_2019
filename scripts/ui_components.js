@@ -94,8 +94,7 @@ class Page {
   }
   displayed_statements() {
     // TODO: can this be done in rdf terms instead?
-    // TODO: should this be page+component level function or component+descendants function?
-    return new Set(this.components.flatMap(x => x.displayed_statements()));
+    return this.root.displayed_statements();
   }
   /**
    * Render the page by calling render on root component.
@@ -104,7 +103,6 @@ class Page {
    * Usually invokved by calling `page.compare(identifier)`} compare
    */
   render(compare) {
-    // TODO: identify and deal with leftover statements
     // TODO: allow root element to be specified
     document.getElementById("root").innerHTML =
       this.title + this.root.render(compare);
@@ -260,7 +258,10 @@ class PredicateBlock {
     return innerHTML;
   }
   displayed_statements() {
-    return this.subgroups;
+    return [
+      ...this.subgroups,
+      ...this.blocks.flatMap(x => x.displayed_statements())
+    ];
   }
 }
 
@@ -296,6 +297,6 @@ class SubjectBlock {
     return innerHTML;
   }
   displayed_statements() {
-    return [];
+    return this.blocks.flatMap(x => x.displayed_statements());
   }
 }
