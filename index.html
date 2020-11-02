@@ -27,16 +27,9 @@
       var page = new Page();
       page.registerComponentClass(VOC("PredicateUL"), ObjectList);
       page.registerComponentClass(VOC("HTMLANDFILTERSUBGROUP"), PredicateBlock);
-      page
-        .load_page(
-          "https://josephguillaume.solidcommunity.net/public/id_cards/conceptualisation.ttl"
-        )
-        .then(() => {
-          // TODO: identify and deal with leftover statements
-          var root = new SubjectBlock(page, page.target_subject);
-          document.getElementById("root").innerHTML =
-            page.title + root.render();
-        });
+      page.load_page(
+        "https://josephguillaume.solidcommunity.net/public/id_cards/conceptualisation.ttl"
+      );
     </script>
   </body>
 </html>

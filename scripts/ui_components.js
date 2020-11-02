@@ -27,9 +27,14 @@ class Page {
     ).value;
 
     this.update_statements();
+    // TODO: identify root component from provided linked data
+    // TODO: optionally allow switching between root components
+    this.root = new SubjectBlock(this, this.target_subject);
+    this.render();
   }
   update_statements() {
     this.statements = this.store.querySync(
+      // TODO: subset by graph?
       $rdf.SPARQLToQuery(
         `select ?text ?position ?link ?annotation ?subject ?predicate ?object WHERE {
           ?st ${voc_uri("text")} ?text.
@@ -57,6 +62,11 @@ class Page {
     this.statements.sort(function (a, b) {
       return a.position - b.position;
     });
+  }
+  render() {
+    // TODO: identify and deal with leftover statements
+    // TODO: allow root element to be specified
+    document.getElementById("root").innerHTML = this.title + this.root.render();
   }
   registerComponentClass(namedNode, classRef) {
     this.registeredComponentClasses[$rdf.termValue(namedNode)] = classRef;
@@ -135,6 +145,7 @@ class PredicateBlock {
       s => (s.subject == this.subject) & (s.predicate == this.predicate)
     );
     this.blocks = this.subgroups.map(s => new SubjectBlock(page, s.object));
+    this.component_id = page.registerComponent(this);
   }
   render() {
     if (this.subgroups.length == 0) return "\n";
@@ -168,6 +179,7 @@ class SubjectBlock {
         x.subject == this.subject &&
         predicates.map(x => x.value).indexOf(x.predicate) > -1
     ).length;
+    this.component_id = page.registerComponent(this);
   }
   handlePredicate(p) {
     let component = this.page.store.any(p, VOC("defaultDisplayComponent"), null)
