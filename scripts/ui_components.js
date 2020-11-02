@@ -92,6 +92,11 @@ class Page {
     ];
     // TODO: indicate in UI that external data is available
   }
+  displayed_statements() {
+    // TODO: can this be done in rdf terms instead?
+    // TODO: should this be page+component level function or component+descendants function?
+    return new Set(this.components.flatMap(x => x.displayed_statements()));
+  }
   /**
    * Render the page by calling render on root component.
    * @param {Boolean indicating whether to ask UIs to compare with external data source
@@ -125,6 +130,8 @@ class Page {
    * @returns {id of component (numeric)}
    */
   registerComponent(instanceRef) {
+    if (this.components.includes(instanceRef))
+      stop("Component is already registered");
     return this.components.push(instanceRef) - 1;
   }
   /**
@@ -216,6 +223,9 @@ class ObjectList {
     let s = this.wanted_statements[options];
     $el.innerHTML = `Annotation: <a href='${s.link}' target='_new'>${s.link}</a>`;
   }
+  displayed_statements() {
+    return this.wanted_statements;
+  }
 }
 
 /**
@@ -249,6 +259,9 @@ class PredicateBlock {
     innerHTML += "</ul></li>\n";
     return innerHTML;
   }
+  displayed_statements() {
+    return this.subgroups;
+  }
 }
 
 /**
@@ -281,5 +294,8 @@ class SubjectBlock {
     this.blocks.forEach(b => (innerHTML += b.render(compare)));
     innerHTML += "</ul></div>\n";
     return innerHTML;
+  }
+  displayed_statements() {
+    return [];
   }
 }
