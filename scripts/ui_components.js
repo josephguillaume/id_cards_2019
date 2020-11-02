@@ -14,6 +14,12 @@ class Page {
     this.store = $rdf.graph();
     this.fetcher = new $rdf.Fetcher(this.store);
   }
+  /**
+   * Load data defining the page UI and data to be used
+   * Updates RDF store, array representation of statements,
+   *   creates root component, and calls render
+   * @param {URI for RDF data readable by rdflib.js} rdf_uri
+   */
   async load_page(rdf_uri) {
     await this.fetcher.load(rdf_uri);
 
@@ -68,12 +74,30 @@ class Page {
     // TODO: allow root element to be specified
     document.getElementById("root").innerHTML = this.title + this.root.render();
   }
+  /**
+   * Register a JS class to be used when data requests a UI component by URI
+   * @param {URI or RDF namedNode defining a component class} namedNode
+   * @param {Reference to a JS class to be used for data requesting that URI} classRef
+   */
   registerComponentClass(namedNode, classRef) {
     this.registeredComponentClasses[$rdf.termValue(namedNode)] = classRef;
   }
+  /**
+   * Register an instantiated component for reuse
+   * Required by show_settings
+   * Usually called by component constructor.
+   * Component can be accessed using `page.components[id]`
+   * @param {Reference to JS object providing a UI component} instanceRef
+   * @returns {id of component (numeric)}
+   */
   registerComponent(instanceRef) {
     return this.components.push(instanceRef) - 1;
   }
+  /**
+   * Show a dialog for settings for a UI component
+   * @param {Component id, obtained using registerComponent} id
+   * @param {Any options required by the UI component (see corresponding component class)} options
+   */
   show_settings(id, options) {
     let component = this.components[id];
     if (component) component.show_settings(options);
