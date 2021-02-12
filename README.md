@@ -8,12 +8,12 @@ A similar ID card generated manually is shown in:
 
 - Zare F, Guillaume JHA, Jakeman AJ (2019) Constructing customized modelling guidelines: a Participatory Integrated Assessment and Modelling example. Modsim2019. https://www.mssanz.org.au/modsim2019/K1/zare.pdf
 
-`index.html` provides a proof of concept web app that reads UI settings and statements to display from RDF. Features:
+`index.html` provides a proof of concept web app that reads UI settings and statements to display from RDF (see https://josephguillaume.github.io/id_cards_2019/). Features:
 
-- List displayed statements to help identify gaps, with `page.displayed_statements()`
-- Allow comparison with external data source with `page.compare(identifier)`
-- Each component has `show_settings()` function
-- Each component is registered: `page.registerComponent()`
-- Labels for URI can be extracted with `page.label(subject)`
-- Draw both UI design and statements from RDF document
 - Display statements in nested UIs. Each component has `render()` function
+- Each component is registered: `page.registerComponent()`
+- Both UI component and statements are drawn from an RDF document
+- Each component has `show_settings()` function
+- Labels for URI can be extracted with `page.label(subject)`
+- Allow comparison with external data source with `page.compare(identifier)`
+- List displayed statements to help identify gaps, with `page.displayed_statements()`
